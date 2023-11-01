@@ -25,14 +25,15 @@ public class FPSMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        grounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
+        // grounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
 
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
 
 
         Vector3 move = transform.right * x + transform.forward * z;
-        velocity.y = gravity * Time.deltaTime;
+        velocity.y += gravity * Time.deltaTime;
         controller.Move(move *walkspeed * Time.deltaTime);
+        controller.Move(velocity * Time.deltaTime);
     }
 }

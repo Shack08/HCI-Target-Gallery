@@ -348,6 +348,7 @@
 -analyzer:"/home/arya/Unity/Hub/Editor/2022.3.12f1/Editor/Data/Tools/Unity.SourceGenerators/Unity.Properties.SourceGenerator.dll"
 -analyzer:"/home/arya/Unity/Hub/Editor/2022.3.12f1/Editor/Data/Tools/Unity.SourceGenerators/Unity.SourceGenerators.dll"
 "Assets/Scripts/FPSMovement.cs"
+"Assets/Scripts/MouseLook.cs"
 -langversion:9.0
 
 /deterministic
