@@ -7,13 +7,15 @@ public class FPSMovement : MonoBehaviour
     public CharacterController controller;
     public float walkspeed = 10f;
     public float gravity = -9.81f;
-    public float jumpHeight = 3f;
+    // public float jumpHeight = 3f;
 
     public Transform groundCheck;
     public float groundDistance = 0.4f;
     public LayerMask groundMask;
 
-    bool grounded;
+    Vector3 velocity;
+
+    // bool grounded;
     // Start is called before the first frame update
     void Start()
     {
@@ -30,7 +32,7 @@ public class FPSMovement : MonoBehaviour
 
 
         Vector3 move = transform.right * x + transform.forward * z;
-
+        velocity.y = gravity * Time.deltaTime;
         controller.Move(move *walkspeed * Time.deltaTime);
     }
 }
