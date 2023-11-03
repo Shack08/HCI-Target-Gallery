@@ -29,6 +29,11 @@ public class GunShoot : MonoBehaviour
         if (Physics.Raycast(FPSCam.transform.position, FPSCam.transform.forward, out hit, range))
         {
             Debug.Log(hit.transform.name);
+
+            if (hit.rigidbody != null)
+            {
+                hit.rigidbody.AddForce(-hit.normal * impactForce);
+            }
         }
     }
 }
