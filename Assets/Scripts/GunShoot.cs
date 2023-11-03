@@ -4,15 +4,31 @@ using UnityEngine;
 
 public class GunShoot : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public float damage = 10f;
+    public float impactForce = 100f;
+    public float range = 100f;
+    public float firingRate = 15f;
+
+    public Camera FPSCam;
+
+    private float nextTimetoFire = 0f;
+
+    private void Update()
     {
-        
+        if (Input.GetButtonDown("Fire1") && Time.time >= nextTimetoFire)
+        {
+            nextTimetoFire = Time.time + 1f / firingRate;
+            Shoot();
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    void Shoot()
     {
-        
+        RaycastHit hit;
+
+        if (Physics.Raycast(FPSCam.transform.position, FPSCam.transform.forward, out hit, range))
+        {
+            Debug.Log(hit.transform.name);
+        }
     }
 }
