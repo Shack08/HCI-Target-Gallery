@@ -169,10 +169,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 1180696954}
   prefab: {fileID: 2232855029113629524, guid: 8b7b268297bc8ad0c966f7728aef9b36, type: 3}
-  arcSize: 72
+  arcSize: 90
   shot: 1
   radius: 10
-  height: 2
+  minHeight: 0
+  maxHeight: 2.5
 --- !u!1 &528421338
 GameObject:
   m_ObjectHideFlags: 0
