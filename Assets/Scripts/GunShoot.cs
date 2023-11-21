@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class GunShoot : MonoBehaviour
 {
+    public bool aimAssist;
+    public float assistRadius;
     public float damage = 10f;
     public float impactForce = 100f;
     public float range = 100f;
@@ -25,20 +27,30 @@ public class GunShoot : MonoBehaviour
     void Shoot()
     {
         RaycastHit hit;
-
-        if (Physics.Raycast(FPSCam.transform.position, FPSCam.transform.forward, out hit, range))
+        if (aimAssist)
         {
-            Debug.Log(hit.transform.name);
-
-            if (hit.rigidbody != null)
+            if(Physics.SphereCast(FPSCam.transform.position, assistRadius, FPSCam.transform.forward, out hit, range))
             {
-                hit.rigidbody.AddForce(-hit.normal * impactForce);
+                Hit(hit);
             }
-            Target target = hit.transform.GetComponent<Target>();
-            if(target != null){
-                target.TakeDamage(damage);
-            }
+        }
+        else if (Physics.Raycast(FPSCam.transform.position, FPSCam.transform.forward, out hit, range))
+        {
+            Hit(hit);
+        }
+    }
 
+    void Hit(RaycastHit hit)
+    {
+        Debug.Log(hit.transform.name);
+
+        if (hit.rigidbody != null)
+        {
+            hit.rigidbody.AddForce(-hit.normal * impactForce);
+        }
+        Target target = hit.transform.GetComponent<Target>();
+        if(target != null){
+            target.TakeDamage(damage);
         }
     }
 }
