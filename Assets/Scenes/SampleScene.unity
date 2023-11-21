@@ -421,7 +421,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ea40f7f2e169eced8933725f9f9cbdda, type: 3}
   m_Name: 
@@ -435,7 +435,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: debf9dc0681375041b58b60aad90faf1, type: 3}
   m_Name: 
@@ -654,7 +654,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1180696950}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 27a0f5af6dd98a7019d1ad8ff9e089cf, type: 3}
   m_Name: 
@@ -1185,6 +1185,26 @@ PrefabInstance:
     - target: {fileID: 2868951945379207863, guid: ea6af131f30751c45b918f695d9b3593, type: 3}
       propertyPath: m_Name
       value: Target
+      objectReference: {fileID: 0}
+    - target: {fileID: 6504810275742159775, guid: ea6af131f30751c45b918f695d9b3593, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 1180696954}
+    - target: {fileID: 6504810275742159775, guid: ea6af131f30751c45b918f695d9b3593, type: 3}
+      propertyPath: radius
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 6504810275742159775, guid: ea6af131f30751c45b918f695d9b3593, type: 3}
+      propertyPath: arcSize
+      value: 120
+      objectReference: {fileID: 0}
+    - target: {fileID: 6504810275742159775, guid: ea6af131f30751c45b918f695d9b3593, type: 3}
+      propertyPath: maxHeight
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6504810275742159775, guid: ea6af131f30751c45b918f695d9b3593, type: 3}
+      propertyPath: minHeight
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6504810275742159775, guid: ea6af131f30751c45b918f695d9b3593, type: 3}
       propertyPath: isTargetPractice
