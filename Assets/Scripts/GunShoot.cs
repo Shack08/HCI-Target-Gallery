@@ -6,6 +6,7 @@ public class GunShoot : MonoBehaviour
 {
     public bool aimAssist;
     public float assistRadius;
+
     public float damage = 10f;
     public float impactForce = 100f;
     public float range = 100f;
@@ -15,6 +16,16 @@ public class GunShoot : MonoBehaviour
 
     private float nextTimetoFire = 0f;
 
+    private int missCount;
+    private float accuracy;
+    private float aimDuration;
+    private float startTime;
+
+
+    void Start()
+    {
+        startTime = Time.time;
+    }
     private void Update()
     {
         if (Input.GetButtonDown("Fire1") && Time.time >= nextTimetoFire)
@@ -32,16 +43,27 @@ public class GunShoot : MonoBehaviour
             if(Physics.SphereCast(FPSCam.transform.position, assistRadius, FPSCam.transform.forward, out hit, range))
             {
                 Hit(hit);
+                Vector3 distance = hit.transform.position - FPSCam.transform.position;
+                accuracy = distance.magnitude - assistRadius;
+                
+
             }
         }
         else if (Physics.Raycast(FPSCam.transform.position, FPSCam.transform.forward, out hit, range))
         {
             Hit(hit);
+            Vector3 distance = hit.transform.position - FPSCam.transform.position
+            accuracy = distance.magnitude;
+        }
+        else
+        {
+            missCount+=1;
         }
     }
 
     void Hit(RaycastHit hit)
     {
+        aimDuration = Time.time - startTime;
         Debug.Log(hit.transform.name);
 
         if (hit.rigidbody != null)
