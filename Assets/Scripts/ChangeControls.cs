@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class ChangeControls : MonoBehaviour
 {
@@ -8,6 +9,8 @@ public class ChangeControls : MonoBehaviour
     public MouseLook mouseLookScript;
     public AnalogJoystickController analogJoystickControllerScript;
     public GyroAim gyroAimScript;
+
+    public TextMeshProUGUI controllerTypeText;
 
     // Array to hold the components
     private MonoBehaviour[] inputComponents;
@@ -17,6 +20,7 @@ public class ChangeControls : MonoBehaviour
 
     void Start()
     {
+        controllerTypeText.text = "Controller Type: ";
         // Initialize the array
         inputComponents = new MonoBehaviour[] {  mouseLookScript, analogJoystickControllerScript, gyroAimScript};
 
@@ -47,6 +51,7 @@ public class ChangeControls : MonoBehaviour
         // Activate the selected component
         inputComponents[index].enabled = true;
 
+        controllerTypeText.text = "Controller Type: " + inputComponents[currentInputIndex].GetType().Name;
           // Log the name of the active component to the console
         Debug.Log(inputComponents[index].GetType().Name + " is now active.");
     }
