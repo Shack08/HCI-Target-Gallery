@@ -1,39 +1,137 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class GunShoot : MonoBehaviour
 {
-    public float damage = 10f;
-    public float impactForce = 100f;
-    public float range = 100f;
-    public float firingRate = 15f;
-
+    public bool aimAssist;
+    [SerializeField] private float assistRadius;
+    [SerializeField] private float damage = 10f;
+    [SerializeField] private float impactForce = 100f;
+    [SerializeField] private float range = 100f;
+    [SerializeField] private float firingRate = 15f;
+    [SerializeField] private int trialCount;
+    [SerializeField] private int maxBlocks;
     public Camera FPSCam;
 
     private float nextTimetoFire = 0f;
+    private int missCount;
+    private int hitCount;
+    private int trialsNum;
+    private int blockCount;
+    private float accuracy;
+    private float aimDuration;
+    private float startTime;
+    private bool isBreak;
 
-    private void Update()
+    [SerializeField] private GameObject breakUI;
+    [SerializeField] private MouseLook mouseLook;
+    [SerializeField] private TextMeshProUGUI blockText;
+    [SerializeField] private TextMeshProUGUI trialText;
+
+    void Start()
     {
+        trialText.text = UpdateText("trials",trialsNum, trialCount);
+        blockText.text = UpdateText("blocks",blockCount, maxBlocks);
+        startTime = Time.time;
+    }
+    private void FixedUpdate()
+    {
+        Debug.Log(blockCount);
         if (Input.GetButtonDown("Fire1") && Time.time >= nextTimetoFire)
         {
             nextTimetoFire = Time.time + 1f / firingRate;
-            Shoot();
+            if(!isBreak)
+                Shoot();
+            
         }
     }
 
+    public string UpdateText(string prompt, int currentCount, int totalCount)
+    {
+        return prompt + " " + currentCount + "/" + totalCount;
+    }
+
+    public void CheckForBreak()
+    {
+        hitCount+=1;
+        trialsNum+=1;
+        if(hitCount>=trialCount)
+        {
+            blockCount+=1;
+            breakUI.SetActive(true);
+            mouseLook.VisualizeCursor(true);
+            SaveData();
+            hitCount = 0;
+            Time.timeScale = 0;
+            isBreak = true;
+            if (blockCount>=maxBlocks)
+            {
+                gameObject.GetComponent<ChangeScene>().LoadScene();
+            }
+        }
+        trialText.text = UpdateText("trials",trialsNum, trialCount);
+        blockText.text = UpdateText("blocks",blockCount, maxBlocks);
+    }
+
+    public void SaveData()
+    {
+        
+    }
+
+    public void AfterBreak()
+    {
+        startTime = Time.time;
+        Time.timeScale = 1.0f;
+        isBreak = false;
+        missCount = 0;
+        trialsNum = 0;
+        trialText.text = UpdateText("trials",trialsNum, trialCount);
+        
+    }
     void Shoot()
     {
         RaycastHit hit;
-
-        if (Physics.Raycast(FPSCam.transform.position, FPSCam.transform.forward, out hit, range))
+        if (aimAssist)
         {
-            Debug.Log(hit.transform.name);
-
-            if (hit.rigidbody != null)
+            if(Physics.SphereCast(FPSCam.transform.position, assistRadius, FPSCam.transform.forward, out hit, range))
             {
-                hit.rigidbody.AddForce(-hit.normal * impactForce);
+                Hit(hit);
+                Vector3 distanceVec = hit.transform.position - FPSCam.transform.position;
+                accuracy = distanceVec.magnitude - assistRadius;
+                CheckForBreak();
             }
+            else
+            {
+                missCount+=1;
+            }
+        }
+        else if (Physics.Raycast(FPSCam.transform.position, FPSCam.transform.forward, out hit, range))
+        {
+            Hit(hit);
+            Vector3 distanceVec = hit.transform.position - FPSCam.transform.position;
+            accuracy = distanceVec.magnitude;
+            CheckForBreak();
+        }
+        else
+        {
+            missCount+=1;
+        }
+    }
+
+    void Hit(RaycastHit hit)
+    {
+        aimDuration = Time.time - startTime;
+        Debug.Log(hit.transform.name);
+
+        if (hit.rigidbody != null)
+        {
+            hit.rigidbody.AddForce(-hit.normal * impactForce);
+        }
+        Target target = hit.transform.GetComponent<Target>();
+        if(target != null){
+            target.TakeDamage(damage);
         }
     }
 }
