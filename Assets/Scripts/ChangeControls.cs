@@ -18,25 +18,6 @@ public class ChangeControls : MonoBehaviour
     // Variable to track the current active input component
     private int currentInputIndex = 0;
 
-    // // Singleton instance
-    // public static ChangeControls Instance { get; private set; }
-
-    // void Awake()
-    // {
-    //     // If an instance already exists, destroy this one
-    //     if (Instance != null)
-    //     {
-    //         Destroy(gameObject);
-    //         return;
-    //     }
-
-    //     // Set the instance to this object
-    //     Instance = this;
-
-    //     // Don't destroy this object when a new scene is loaded
-    //     DontDestroyOnLoad(gameObject);
-    // }
-
     void Start()
     {
         controllerTypeText.text = "";

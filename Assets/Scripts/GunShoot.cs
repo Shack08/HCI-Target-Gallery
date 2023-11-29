@@ -26,6 +26,8 @@ public class GunShoot : MonoBehaviour
     private float startTime;
     private bool isBreak;
 
+    [SerializeField] private AudioSource fireAudioSource;
+
     [SerializeField] private GameObject breakUI;
     [SerializeField] private MouseLook mouseLook;
     [SerializeField] private TextMeshProUGUI blockText;
@@ -45,7 +47,14 @@ public class GunShoot : MonoBehaviour
             nextTimetoFire = Time.time + 1f / firingRate;
             if(!isBreak)
                 Shoot();
-            
+                // If the firing sound is already playing, stop it
+            if (fireAudioSource.isPlaying)
+            {
+                fireAudioSource.Stop();
+            }
+
+            // Play the firing sound
+            fireAudioSource.Play();
         }
     }
 
@@ -85,7 +94,6 @@ public class GunShoot : MonoBehaviour
     {
             // Get the path of the file
         string path = Path.Combine(Application.dataPath, "saveData.txt");
-        Debug.Log(Application.dataPath);
         // Write the data to the file
         File.AppendAllText(path, data);
     }
