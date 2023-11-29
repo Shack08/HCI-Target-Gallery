@@ -18,14 +18,34 @@ public class ChangeControls : MonoBehaviour
     // Variable to track the current active input component
     private int currentInputIndex = 0;
 
+    // // Singleton instance
+    // public static ChangeControls Instance { get; private set; }
+
+    // void Awake()
+    // {
+    //     // If an instance already exists, destroy this one
+    //     if (Instance != null)
+    //     {
+    //         Destroy(gameObject);
+    //         return;
+    //     }
+
+    //     // Set the instance to this object
+    //     Instance = this;
+
+    //     // Don't destroy this object when a new scene is loaded
+    //     DontDestroyOnLoad(gameObject);
+    // }
+
     void Start()
     {
-        controllerTypeText.text = "Controller Type: ";
+        controllerTypeText.text = "";
         // Initialize the array
         inputComponents = new MonoBehaviour[] {  mouseLookScript, analogJoystickControllerScript, gyroAimScript};
-
+         // Load the controller type
+        int controllerIndex = PlayerPrefs.GetInt("ControllerIndex", 0);
         // Activate the initial input component
-        SwitchInputComponent(currentInputIndex);
+        SwitchInputComponent(controllerIndex);
     }
 
     void Update()
@@ -40,7 +60,7 @@ public class ChangeControls : MonoBehaviour
     }
 
     // Helper method to activate the specified input component
-    void SwitchInputComponent(int index)
+    public void SwitchInputComponent(int index)
     {
         // Deactivate all components
         foreach (var component in inputComponents)

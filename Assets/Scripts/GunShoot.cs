@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using System.IO;
 
 public class GunShoot : MonoBehaviour
 {
@@ -38,7 +39,7 @@ public class GunShoot : MonoBehaviour
     }
     private void Update()
     {
-        Debug.Log(blockCount);
+        // Debug.Log(blockCount);
         if (Input.GetButtonDown("Fire1") && Time.time >= nextTimetoFire)
         {
             nextTimetoFire = Time.time + 1f / firingRate;
@@ -57,12 +58,17 @@ public class GunShoot : MonoBehaviour
     {
         hitCount+=1;
         trialsNum+=1;
+        startTime = Time.time;
+        Debug.Log( " blockCount: " + blockCount +" trialsNum: " + trialsNum + " hitCount: " + hitCount + " missCount: " + missCount + " accuracy: " + accuracy + " aimDuration: " + aimDuration);
+        // Create a string with the data you want to save
+        string data = blockCount + "," + trialsNum + "," + hitCount + "," + missCount + "," + accuracy + "," + aimDuration+"\n";
+        SaveData(data);
         if(hitCount>=trialCount)
         {
             blockCount+=1;
             breakUI.SetActive(true);
             mouseLook.VisualizeCursor(true);
-            SaveData();
+            // SaveData();
             hitCount = 0;
             Time.timeScale = 0;
             isBreak = true;
@@ -75,9 +81,13 @@ public class GunShoot : MonoBehaviour
         blockText.text = UpdateText("blocks",blockCount, maxBlocks);
     }
 
-    public void SaveData()
+    public void SaveData(string data)
     {
-        
+            // Get the path of the file
+        string path = Path.Combine(Application.dataPath, "saveData.txt");
+        Debug.Log(Application.dataPath);
+        // Write the data to the file
+        File.AppendAllText(path, data);
     }
 
     public void AfterBreak()
@@ -123,7 +133,7 @@ public class GunShoot : MonoBehaviour
     void Hit(RaycastHit hit)
     {
         aimDuration = Time.time - startTime;
-        Debug.Log(hit.transform.name);
+        // Debug.Log(hit.transform.name);
 
         if (hit.rigidbody != null)
         {
