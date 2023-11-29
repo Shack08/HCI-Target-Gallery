@@ -36,7 +36,7 @@ public class GunShoot : MonoBehaviour
         blockText.text = UpdateText("blocks",blockCount, maxBlocks);
         startTime = Time.time;
     }
-    private void FixedUpdate()
+    private void Update()
     {
         Debug.Log(blockCount);
         if (Input.GetButtonDown("Fire1") && Time.time >= nextTimetoFire)
