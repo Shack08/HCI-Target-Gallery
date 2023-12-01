@@ -68,9 +68,10 @@ public class GunShoot : MonoBehaviour
         hitCount+=1;
         trialsNum+=1;
         startTime = Time.time;
-        Debug.Log( " blockCount: " + blockCount +" trialsNum: " + trialsNum + " hitCount: " + hitCount + " missCount: " + missCount + " accuracy: " + accuracy + " aimDuration: " + aimDuration);
+        // Debug.Log( " blockCount: " + blockCount +" trialsNum: " + trialsNum + " hitCount: " + hitCount + " missCount: " + missCount + " accuracy: " + accuracy + " aimDuration: " + aimDuration);
         // Create a string with the data you want to save
-        string data = blockCount + "," + trialsNum + "," + hitCount + "," + missCount + "," + accuracy + "," + aimDuration+"\n";
+        string data = ""+blockCount + "," + trialsNum + "," + hitCount + "," + missCount + "," + accuracy + "," + aimDuration+"\n";
+        Debug.Log(data);
         SaveData(data);
         if(hitCount>=trialCount)
         {
