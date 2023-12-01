@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using System.IO;
 
 public class GunShoot : MonoBehaviour
 {
@@ -25,6 +26,8 @@ public class GunShoot : MonoBehaviour
     private float startTime;
     private bool isBreak;
 
+    [SerializeField] private AudioSource fireAudioSource;
+
     [SerializeField] private GameObject breakUI;
     [SerializeField] private MouseLook mouseLook;
     [SerializeField] private TextMeshProUGUI blockText;
@@ -36,15 +39,22 @@ public class GunShoot : MonoBehaviour
         blockText.text = UpdateText("blocks",blockCount, maxBlocks);
         startTime = Time.time;
     }
-    private void FixedUpdate()
+    private void Update()
     {
-        Debug.Log(blockCount);
+        // Debug.Log(blockCount);
         if (Input.GetButtonDown("Fire1") && Time.time >= nextTimetoFire)
         {
             nextTimetoFire = Time.time + 1f / firingRate;
             if(!isBreak)
                 Shoot();
-            
+                // If the firing sound is already playing, stop it
+            if (fireAudioSource.isPlaying)
+            {
+                fireAudioSource.Stop();
+            }
+
+            // Play the firing sound
+            fireAudioSource.Play();
         }
     }
 
@@ -57,12 +67,18 @@ public class GunShoot : MonoBehaviour
     {
         hitCount+=1;
         trialsNum+=1;
+        startTime = Time.time;
+        // Debug.Log( " blockCount: " + blockCount +" trialsNum: " + trialsNum + " hitCount: " + hitCount + " missCount: " + missCount + " accuracy: " + accuracy + " aimDuration: " + aimDuration);
+        // Create a string with the data you want to save
+        string data = ""+blockCount + "," + trialsNum + "," + hitCount + "," + missCount + "," + accuracy + "," + aimDuration+"\n";
+        Debug.Log(data);
+        SaveData(data);
         if(hitCount>=trialCount)
         {
             blockCount+=1;
             breakUI.SetActive(true);
             mouseLook.VisualizeCursor(true);
-            SaveData();
+            // SaveData();
             hitCount = 0;
             Time.timeScale = 0;
             isBreak = true;
@@ -75,9 +91,12 @@ public class GunShoot : MonoBehaviour
         blockText.text = UpdateText("blocks",blockCount, maxBlocks);
     }
 
-    public void SaveData()
+    public void SaveData(string data)
     {
-        
+            // Get the path of the file
+        string path = Path.Combine(Application.dataPath, "saveData.txt");
+        // Write the data to the file
+        File.AppendAllText(path, data);
     }
 
     public void AfterBreak()
@@ -123,7 +142,7 @@ public class GunShoot : MonoBehaviour
     void Hit(RaycastHit hit)
     {
         aimDuration = Time.time - startTime;
-        Debug.Log(hit.transform.name);
+        // Debug.Log(hit.transform.name);
 
         if (hit.rigidbody != null)
         {

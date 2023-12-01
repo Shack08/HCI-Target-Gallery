@@ -11,6 +11,7 @@ public class Target : MonoBehaviour
     public float arcSize;
     public float radius;
     public float health = 10f;
+    [SerializeField] private AudioSource hitAudioSource;
     public float defaultHealth;    
     // Start is called before the first frame update
     void Start()
@@ -43,6 +44,7 @@ public class Target : MonoBehaviour
         else{
             Destroy(gameObject);
         }
+        hitAudioSource.Play();
         Debug.Log("Target Broken");
     }
 }
