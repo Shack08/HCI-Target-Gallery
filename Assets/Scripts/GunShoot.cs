@@ -33,8 +33,14 @@ public class GunShoot : MonoBehaviour
     [SerializeField] private TextMeshProUGUI blockText;
     [SerializeField] private TextMeshProUGUI trialText;
 
+    public MouseLook mouseLookScript;
+    public AnalogJoystickController analogJoystickControllerScript;
+    public GyroAim gyroAimScript;
+
+    private MonoBehaviour[] inputComponents;
     void Start()
     {
+        inputComponents = new MonoBehaviour[] {  mouseLookScript, analogJoystickControllerScript, gyroAimScript};
         trialText.text = UpdateText("trials",trialsNum, trialCount);
         blockText.text = UpdateText("blocks",blockCount, maxBlocks);
         startTime = Time.time;
@@ -69,8 +75,10 @@ public class GunShoot : MonoBehaviour
         trialsNum+=1;
         startTime = Time.time;
         // Debug.Log( " blockCount: " + blockCount +" trialsNum: " + trialsNum + " hitCount: " + hitCount + " missCount: " + missCount + " accuracy: " + accuracy + " aimDuration: " + aimDuration);
+       int controllerIndex = PlayerPrefs.GetInt("ControllerIndex", 0);
+       string inputType = inputComponents[controllerIndex].GetType().Name;
         // Create a string with the data you want to save
-        string data = ""+blockCount + "," + trialsNum + "," + hitCount + "," + missCount + "," + accuracy + "," + aimDuration+"\n";
+        string data = ""+inputType+","+(blockCount+1) + "," + trialsNum + "," + hitCount + "," + missCount + "," + accuracy + "," + aimDuration+"\n";
         Debug.Log(data);
         SaveData(data);
         if(hitCount>=trialCount)
@@ -94,7 +102,7 @@ public class GunShoot : MonoBehaviour
     public void SaveData(string data)
     {
             // Get the path of the file
-        string path = Path.Combine(Application.dataPath, "saveData.txt");
+        string path = Path.Combine(Application.dataPath, "saveData.csv");
         // Write the data to the file
         File.AppendAllText(path, data);
     }

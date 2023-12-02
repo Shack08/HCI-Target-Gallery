@@ -1574,6 +1574,9 @@ MonoBehaviour:
   mouseLook: {fileID: 963194229}
   blockText: {fileID: 1542445947}
   trialText: {fileID: 980606946}
+  mouseLookScript: {fileID: 963194229}
+  analogJoystickControllerScript: {fileID: 963194230}
+  gyroAimScript: {fileID: 963194231}
 --- !u!114 &1278965592
 MonoBehaviour:
   m_ObjectHideFlags: 0

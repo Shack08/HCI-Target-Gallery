@@ -16,7 +16,7 @@ public class ChangeControls : MonoBehaviour
     private MonoBehaviour[] inputComponents;
 
     // Variable to track the current active input component
-    private int currentInputIndex = 0;
+    // private int currentInputIndex = 0;
 
     void Start()
     {
@@ -31,13 +31,13 @@ public class ChangeControls : MonoBehaviour
 
     void Update()
     {
-        // Check for button press (you can customize this based on your input system)
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            // Toggle to the next input component
-            currentInputIndex = (currentInputIndex + 1) % 3;
-            SwitchInputComponent(currentInputIndex);
-        }
+        // // Check for button press (you can customize this based on your input system)
+        // if (Input.GetKeyDown(KeyCode.Space))
+        // {
+        //     // Toggle to the next input component
+        //     currentInputIndex = (currentInputIndex + 1) % 3;
+        //     SwitchInputComponent(currentInputIndex);
+        // }
     }
 
     // Helper method to activate the specified input component
@@ -52,7 +52,7 @@ public class ChangeControls : MonoBehaviour
         // Activate the selected component
         inputComponents[index].enabled = true;
 
-        controllerTypeText.text = "Controller Type: " + inputComponents[currentInputIndex].GetType().Name;
+        controllerTypeText.text = "Controller Type: " + inputComponents[index].GetType().Name;
           // Log the name of the active component to the console
         Debug.Log(inputComponents[index].GetType().Name + " is now active.");
     }
