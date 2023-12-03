@@ -92,7 +92,7 @@ public class GunShoot : MonoBehaviour
         string data = ""+inputType+","+(blockCount+1) + "," + trialsNum + "," + hitCount + "," + missCount + "," + accuracy + "," + aimDuration+"\n";
         Debug.Log(data);
         SaveData(data);
-
+        missCount = 0;
         if(hitCount>=trialCount)
         {
             blockCount+=1;
