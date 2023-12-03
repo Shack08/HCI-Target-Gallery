@@ -38,6 +38,7 @@ public class GunShoot : MonoBehaviour
     public MouseLook mouseLookScript;
     public AnalogJoystickController analogJoystickControllerScript;
     public GyroAim gyroAimScript;
+    public GyroAImNoAimAssist gyroAimNoAimAssistScript;
 
     private MonoBehaviour[] inputComponents;
     void Start()
@@ -50,7 +51,7 @@ public class GunShoot : MonoBehaviour
         // Ensure the directory exists
         Directory.CreateDirectory(directoryPath);
 
-        inputComponents = new MonoBehaviour[] {  mouseLookScript, analogJoystickControllerScript, gyroAimScript};
+        inputComponents = new MonoBehaviour[] {  mouseLookScript, analogJoystickControllerScript, gyroAimScript, gyroAimNoAimAssistScript};
         trialText.text = UpdateText("trials",trialsNum, trialCount);
         blockText.text = UpdateText("blocks",blockCount, maxBlocks);
         startTime = Time.time;
@@ -135,27 +136,18 @@ public class GunShoot : MonoBehaviour
         
     }
     void Shoot()
+{
+    RaycastHit hit;
+    int controllerIndex = PlayerPrefs.GetInt("ControllerIndex", 0);
+    string inputType = inputComponents[controllerIndex].GetType().Name;
+
+    if (aimAssist && inputType == "GyroAim")
     {
-        RaycastHit hit;
-        if (aimAssist)
-        {
-            if(Physics.SphereCast(FPSCam.transform.position, assistRadius, FPSCam.transform.forward, out hit, range))
-            {
-                Hit(hit);
-                Vector3 distanceVec = hit.transform.position - FPSCam.transform.position;
-                accuracy = distanceVec.magnitude - assistRadius;
-                CheckForBreak();
-            }
-            else
-            {
-                missCount+=1;
-            }
-        }
-        else if (Physics.Raycast(FPSCam.transform.position, FPSCam.transform.forward, out hit, range))
+        if(Physics.SphereCast(FPSCam.transform.position, assistRadius, FPSCam.transform.forward, out hit, range))
         {
             Hit(hit);
             Vector3 distanceVec = hit.transform.position - FPSCam.transform.position;
-            accuracy = distanceVec.magnitude;
+            accuracy = distanceVec.magnitude - assistRadius;
             CheckForBreak();
         }
         else
@@ -163,6 +155,18 @@ public class GunShoot : MonoBehaviour
             missCount+=1;
         }
     }
+    else if (Physics.Raycast(FPSCam.transform.position, FPSCam.transform.forward, out hit, range))
+    {
+        Hit(hit);
+        Vector3 distanceVec = hit.transform.position - FPSCam.transform.position;
+        accuracy = distanceVec.magnitude;
+        CheckForBreak();
+    }
+    else
+    {
+        missCount+=1;
+    }
+}
 
     void Hit(RaycastHit hit)
     {

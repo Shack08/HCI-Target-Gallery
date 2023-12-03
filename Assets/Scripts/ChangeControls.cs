@@ -9,6 +9,7 @@ public class ChangeControls : MonoBehaviour
     public MouseLook mouseLookScript;
     public AnalogJoystickController analogJoystickControllerScript;
     public GyroAim gyroAimScript;
+    public GyroAImNoAimAssist gyroAimNoAimAssistScript;
 
     public TextMeshProUGUI controllerTypeText;
 
@@ -22,7 +23,7 @@ public class ChangeControls : MonoBehaviour
     {
         controllerTypeText.text = "";
         // Initialize the array
-        inputComponents = new MonoBehaviour[] {  mouseLookScript, analogJoystickControllerScript, gyroAimScript};
+        inputComponents = new MonoBehaviour[] {  mouseLookScript, analogJoystickControllerScript, gyroAimScript, gyroAimNoAimAssistScript};
          // Load the controller type
         int controllerIndex = PlayerPrefs.GetInt("ControllerIndex", 0);
         // Activate the initial input component
