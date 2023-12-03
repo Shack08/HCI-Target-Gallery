@@ -11,4 +11,12 @@ public class ChangeScene : MonoBehaviour
 
         SceneManager.LoadScene(sceneName);
     }
+
+    void Update()
+    {
+        if (Input.GetKey("escape"))
+        {
+            Application.Quit();
+        }
+    }
 }
