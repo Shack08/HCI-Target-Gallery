@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using System;
 using System.IO;
 
 public class GunShoot : MonoBehaviour
@@ -25,6 +26,7 @@ public class GunShoot : MonoBehaviour
     private float aimDuration;
     private float startTime;
     private bool isBreak;
+    private string path;
 
     [SerializeField] private AudioSource fireAudioSource;
 
@@ -40,6 +42,14 @@ public class GunShoot : MonoBehaviour
     private MonoBehaviour[] inputComponents;
     void Start()
     {
+            // Get the path of the file
+        string timestamp = DateTime.Now.ToString("yyyyMMddHHmmss");
+        string directoryPath = Path.Combine(Application.dataPath, "data");
+        path = Path.Combine(directoryPath, $"saveData_{timestamp}.csv");
+
+        // Ensure the directory exists
+        Directory.CreateDirectory(directoryPath);
+
         inputComponents = new MonoBehaviour[] {  mouseLookScript, analogJoystickControllerScript, gyroAimScript};
         trialText.text = UpdateText("trials",trialsNum, trialCount);
         blockText.text = UpdateText("blocks",blockCount, maxBlocks);
@@ -74,24 +84,32 @@ public class GunShoot : MonoBehaviour
         hitCount+=1;
         trialsNum+=1;
         startTime = Time.time;
-        // Debug.Log( " blockCount: " + blockCount +" trialsNum: " + trialsNum + " hitCount: " + hitCount + " missCount: " + missCount + " accuracy: " + accuracy + " aimDuration: " + aimDuration);
        int controllerIndex = PlayerPrefs.GetInt("ControllerIndex", 0);
        string inputType = inputComponents[controllerIndex].GetType().Name;
+
         // Create a string with the data you want to save
         string data = ""+inputType+","+(blockCount+1) + "," + trialsNum + "," + hitCount + "," + missCount + "," + accuracy + "," + aimDuration+"\n";
         Debug.Log(data);
         SaveData(data);
+
         if(hitCount>=trialCount)
         {
             blockCount+=1;
             breakUI.SetActive(true);
             mouseLook.VisualizeCursor(true);
-            // SaveData();
             hitCount = 0;
             Time.timeScale = 0;
             isBreak = true;
             if (blockCount>=maxBlocks)
             {
+                    // Get the path of the file
+                string timestamp = DateTime.Now.ToString("yyyyMMddHHmmss");
+                string directoryPath = Path.Combine(Application.dataPath, "data");
+                path = Path.Combine(directoryPath, $"saveData_{timestamp}.csv");
+
+                // Ensure the directory exists
+                Directory.CreateDirectory(directoryPath);
+                AfterBreak();
                 gameObject.GetComponent<ChangeScene>().LoadScene();
             }
         }
@@ -101,14 +119,13 @@ public class GunShoot : MonoBehaviour
 
     public void SaveData(string data)
     {
-            // Get the path of the file
-        string path = Path.Combine(Application.dataPath, "saveData.csv");
-        // Write the data to the file
+         //Write the data to the file
         File.AppendAllText(path, data);
     }
 
     public void AfterBreak()
     {
+        Debug.Log("AfterBreak method called");
         startTime = Time.time;
         Time.timeScale = 1.0f;
         isBreak = false;
