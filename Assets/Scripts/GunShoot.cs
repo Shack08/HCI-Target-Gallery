@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using System;
 using System.IO;
 
 public class GunShoot : MonoBehaviour
@@ -25,6 +26,7 @@ public class GunShoot : MonoBehaviour
     private float aimDuration;
     private float startTime;
     private bool isBreak;
+    private string path;
 
     [SerializeField] private AudioSource fireAudioSource;
 
@@ -33,8 +35,23 @@ public class GunShoot : MonoBehaviour
     [SerializeField] private TextMeshProUGUI blockText;
     [SerializeField] private TextMeshProUGUI trialText;
 
+    public MouseLook mouseLookScript;
+    public AnalogJoystickController analogJoystickControllerScript;
+    public GyroAim gyroAimScript;
+    public GyroAImNoAimAssist gyroAimNoAimAssistScript;
+
+    private MonoBehaviour[] inputComponents;
     void Start()
     {
+            // Get the path of the file
+        string timestamp = DateTime.Now.ToString("yyyyMMddHHmmss");
+        string directoryPath = Path.Combine(Application.dataPath, "data");
+        path = Path.Combine(directoryPath, $"saveData_{timestamp}.csv");
+
+        // Ensure the directory exists
+        Directory.CreateDirectory(directoryPath);
+
+        inputComponents = new MonoBehaviour[] {  mouseLookScript, analogJoystickControllerScript, gyroAimScript, gyroAimNoAimAssistScript};
         trialText.text = UpdateText("trials",trialsNum, trialCount);
         blockText.text = UpdateText("blocks",blockCount, maxBlocks);
         startTime = Time.time;
@@ -68,22 +85,32 @@ public class GunShoot : MonoBehaviour
         hitCount+=1;
         trialsNum+=1;
         startTime = Time.time;
-        // Debug.Log( " blockCount: " + blockCount +" trialsNum: " + trialsNum + " hitCount: " + hitCount + " missCount: " + missCount + " accuracy: " + accuracy + " aimDuration: " + aimDuration);
+       int controllerIndex = PlayerPrefs.GetInt("ControllerIndex", 0);
+       string inputType = inputComponents[controllerIndex].GetType().Name;
+
         // Create a string with the data you want to save
-        string data = ""+blockCount + "," + trialsNum + "," + hitCount + "," + missCount + "," + accuracy + "," + aimDuration+"\n";
+        string data = ""+inputType+","+(blockCount+1) + "," + trialsNum + "," + hitCount + "," + missCount + "," + accuracy + "," + aimDuration+"\n";
         Debug.Log(data);
         SaveData(data);
+
         if(hitCount>=trialCount)
         {
             blockCount+=1;
             breakUI.SetActive(true);
             mouseLook.VisualizeCursor(true);
-            // SaveData();
             hitCount = 0;
             Time.timeScale = 0;
             isBreak = true;
             if (blockCount>=maxBlocks)
             {
+                    // Get the path of the file
+                string timestamp = DateTime.Now.ToString("yyyyMMddHHmmss");
+                string directoryPath = Path.Combine(Application.dataPath, "data");
+                path = Path.Combine(directoryPath, $"saveData_{timestamp}.csv");
+
+                // Ensure the directory exists
+                Directory.CreateDirectory(directoryPath);
+                AfterBreak();
                 gameObject.GetComponent<ChangeScene>().LoadScene();
             }
         }
@@ -93,14 +120,13 @@ public class GunShoot : MonoBehaviour
 
     public void SaveData(string data)
     {
-            // Get the path of the file
-        string path = Path.Combine(Application.dataPath, "saveData.txt");
-        // Write the data to the file
+         //Write the data to the file
         File.AppendAllText(path, data);
     }
 
     public void AfterBreak()
     {
+        Debug.Log("AfterBreak method called");
         startTime = Time.time;
         Time.timeScale = 1.0f;
         isBreak = false;
@@ -110,27 +136,18 @@ public class GunShoot : MonoBehaviour
         
     }
     void Shoot()
+{
+    RaycastHit hit;
+    int controllerIndex = PlayerPrefs.GetInt("ControllerIndex", 0);
+    string inputType = inputComponents[controllerIndex].GetType().Name;
+
+    if (aimAssist && inputType == "GyroAim")
     {
-        RaycastHit hit;
-        if (aimAssist)
-        {
-            if(Physics.SphereCast(FPSCam.transform.position, assistRadius, FPSCam.transform.forward, out hit, range))
-            {
-                Hit(hit);
-                Vector3 distanceVec = hit.transform.position - FPSCam.transform.position;
-                accuracy = distanceVec.magnitude - assistRadius;
-                CheckForBreak();
-            }
-            else
-            {
-                missCount+=1;
-            }
-        }
-        else if (Physics.Raycast(FPSCam.transform.position, FPSCam.transform.forward, out hit, range))
+        if(Physics.SphereCast(FPSCam.transform.position, assistRadius, FPSCam.transform.forward, out hit, range))
         {
             Hit(hit);
             Vector3 distanceVec = hit.transform.position - FPSCam.transform.position;
-            accuracy = distanceVec.magnitude;
+            accuracy = distanceVec.magnitude - assistRadius;
             CheckForBreak();
         }
         else
@@ -138,6 +155,18 @@ public class GunShoot : MonoBehaviour
             missCount+=1;
         }
     }
+    else if (Physics.Raycast(FPSCam.transform.position, FPSCam.transform.forward, out hit, range))
+    {
+        Hit(hit);
+        Vector3 distanceVec = hit.transform.position - FPSCam.transform.position;
+        accuracy = distanceVec.magnitude;
+        CheckForBreak();
+    }
+    else
+    {
+        missCount+=1;
+    }
+}
 
     void Hit(RaycastHit hit)
     {
