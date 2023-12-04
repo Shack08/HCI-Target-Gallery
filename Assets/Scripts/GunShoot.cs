@@ -165,9 +165,13 @@ public class GunShoot : MonoBehaviour
     {
         if(Physics.SphereCast(FPSCam.transform.position, assistRadius, FPSCam.transform.forward, out hit, range))
         {
+            
+            Vector3 distanceVec = hit.transform.position - hit.point;
+            if(distanceVec.magnitude > assistRadius)
+                accuracy = distanceVec.magnitude - assistRadius;
+            else
+                accuracy = 0;
             Hit(hit);
-            Vector3 distanceVec = hit.transform.position - FPSCam.transform.position;
-            accuracy = distanceVec.magnitude - assistRadius;
             CheckForBreak();
         }
         else
@@ -177,9 +181,10 @@ public class GunShoot : MonoBehaviour
     }
     else if (Physics.Raycast(FPSCam.transform.position, FPSCam.transform.forward, out hit, range))
     {
-        Hit(hit);
-        Vector3 distanceVec = hit.transform.position - FPSCam.transform.position;
+        
+        Vector3 distanceVec = hit.transform.position - hit.point;
         accuracy = distanceVec.magnitude;
+        Hit(hit);
         CheckForBreak();
     }
     else
