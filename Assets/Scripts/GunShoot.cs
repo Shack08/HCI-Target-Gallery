@@ -14,6 +14,7 @@ public class GunShoot : MonoBehaviour
     [SerializeField] private float firingRate = 15f;
     [SerializeField] private int trialCount;
     [SerializeField] private int maxBlocks;
+    [SerializeField] private GameObject bullseye;
     public Camera FPSCam;
 
     private float nextTimetoFire = 0f;
@@ -71,7 +72,7 @@ public class GunShoot : MonoBehaviour
         // Debug.Log( " blockCount: " + blockCount +" trialsNum: " + trialsNum + " hitCount: " + hitCount + " missCount: " + missCount + " accuracy: " + accuracy + " aimDuration: " + aimDuration);
         // Create a string with the data you want to save
         string data = ""+blockCount + "," + trialsNum + "," + hitCount + "," + missCount + "," + accuracy + "," + aimDuration+"\n";
-        Debug.Log(data);
+        // Debug.Log(data);
         SaveData(data);
         if(hitCount>=trialCount)
         {
@@ -116,10 +117,16 @@ public class GunShoot : MonoBehaviour
         {
             if(Physics.SphereCast(FPSCam.transform.position, assistRadius, FPSCam.transform.forward, out hit, range))
             {
-                Hit(hit);
-                Vector3 distanceVec = GetComponent<Camera>().WorldToScreenPoint(hit.transform.position) - Input.mousePosition;
-                accuracy = distanceVec.magnitude - assistRadius;
+                Vector3 distanceVec = hit.transform.position - hit.point;
+                if(distanceVec.magnitude > assistRadius)
+                    accuracy = distanceVec.magnitude - assistRadius;
+                else
+                    accuracy = 0;
                 Debug.Log(accuracy);
+                Debug.Log(hit.point);
+                Debug.Log(hit.transform.position);
+                Hit(hit);
+                
                 CheckForBreak();
             }
             else
@@ -129,10 +136,12 @@ public class GunShoot : MonoBehaviour
         }
         else if (Physics.Raycast(FPSCam.transform.position, FPSCam.transform.forward, out hit, range))
         {
-            Hit(hit);
-            Vector3 distanceVec = GetComponent<Camera>().WorldToScreenPoint(hit.transform.position) - Input.mousePosition;
+            Vector3 distanceVec = hit.transform.position - hit.point;
             accuracy = distanceVec.magnitude;
             Debug.Log(accuracy);
+            Debug.Log(hit.point);
+            Debug.Log(hit.transform.position);
+            Hit(hit);
             CheckForBreak();
         }
         else
