@@ -39,7 +39,8 @@ public class GunShoot : MonoBehaviour
     public AnalogJoystickController analogJoystickControllerScript;
     public GyroAim gyroAimScript;
     public GyroAImNoAimAssist gyroAimNoAimAssistScript;
-
+    private Vector3 initialAimPoint;
+    private float distanceBetweenReticleAndNewTarget;
     private MonoBehaviour[] inputComponents;
     void Start()
     {
@@ -50,6 +51,11 @@ public class GunShoot : MonoBehaviour
 
         // Ensure the directory exists
         Directory.CreateDirectory(directoryPath);
+        // Define your headers
+        string headers = "InputType,BlockCount,TrialsNum,HitCount,MissCount,Accuracy,DistanceBetweenReticleAndNewTarget,AimDuration\n";
+
+        // Write the headers to the file
+        File.WriteAllText(path, headers);
 
         inputComponents = new MonoBehaviour[] {  mouseLookScript, analogJoystickControllerScript, gyroAimScript, gyroAimNoAimAssistScript};
         trialText.text = UpdateText("trials",trialsNum, trialCount);
@@ -58,6 +64,20 @@ public class GunShoot : MonoBehaviour
     }
     private void Update()
     {
+
+            // Cast a ray from the camera's position in the direction the camera is facing
+        RaycastHit hit;
+        if (Physics.Raycast(FPSCam.transform.position, FPSCam.transform.forward, out hit, range))
+        {
+            // If the ray hits an object, store the hit point as the initial aim point
+            initialAimPoint = hit.point;
+        }
+        else
+        {
+            // If the ray doesn't hit an object, store the point at the end of the ray
+            initialAimPoint = FPSCam.transform.position + FPSCam.transform.forward * range;
+        }
+
         // Debug.Log(blockCount);
         if (Input.GetButtonDown("Fire1") && Time.time >= nextTimetoFire)
         {
@@ -89,7 +109,7 @@ public class GunShoot : MonoBehaviour
        string inputType = inputComponents[controllerIndex].GetType().Name;
 
         // Create a string with the data you want to save
-        string data = ""+inputType+","+(blockCount+1) + "," + trialsNum + "," + hitCount + "," + missCount + "," + accuracy + "," + aimDuration+"\n";
+        string data = ""+inputType+","+(blockCount+1) + "," + trialsNum + "," + hitCount + "," + missCount + "," + accuracy + "," + distanceBetweenReticleAndNewTarget+","+aimDuration+"\n";
         Debug.Log(data);
         SaveData(data);
         missCount = 0;
@@ -181,5 +201,22 @@ public class GunShoot : MonoBehaviour
         if(target != null){
             target.TakeDamage(damage);
         }
+    }
+
+        void OnEnable()
+    {
+        Target.OnTargetSpawned += HandleTargetSpawned;
+    }
+
+    void OnDisable()
+    {
+        Target.OnTargetSpawned -= HandleTargetSpawned;
+    }
+
+    void HandleTargetSpawned(Transform targetTransform)
+    {
+        // Calculate the distance between the initial aim point and the new target's position
+        distanceBetweenReticleAndNewTarget = Vector3.Distance(initialAimPoint, targetTransform.position);
+        Debug.Log("Distance between initial aim point and new target: " + distanceBetweenReticleAndNewTarget);
     }
 }
