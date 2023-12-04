@@ -117,8 +117,9 @@ public class GunShoot : MonoBehaviour
             if(Physics.SphereCast(FPSCam.transform.position, assistRadius, FPSCam.transform.forward, out hit, range))
             {
                 Hit(hit);
-                Vector3 distanceVec = hit.transform.position - FPSCam.transform.position;
+                Vector3 distanceVec = GetComponent<Camera>().WorldToScreenPoint(hit.transform.position) - Input.mousePosition;
                 accuracy = distanceVec.magnitude - assistRadius;
+                Debug.Log(accuracy);
                 CheckForBreak();
             }
             else
@@ -129,8 +130,9 @@ public class GunShoot : MonoBehaviour
         else if (Physics.Raycast(FPSCam.transform.position, FPSCam.transform.forward, out hit, range))
         {
             Hit(hit);
-            Vector3 distanceVec = hit.transform.position - FPSCam.transform.position;
+            Vector3 distanceVec = GetComponent<Camera>().WorldToScreenPoint(hit.transform.position) - Input.mousePosition;
             accuracy = distanceVec.magnitude;
+            Debug.Log(accuracy);
             CheckForBreak();
         }
         else
