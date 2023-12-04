@@ -1583,8 +1583,8 @@ MonoBehaviour:
   impactForce: 100
   range: 100
   firingRate: 15
-  trialCount: 5
-  maxBlocks: 3
+  trialCount: 15
+  maxBlocks: 2
   FPSCam: {fileID: 963194227}
   fireAudioSource: {fileID: 1278965593}
   breakUI: {fileID: 582841295}
